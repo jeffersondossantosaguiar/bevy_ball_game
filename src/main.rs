@@ -1,31 +1,27 @@
-pub mod enemy;
 pub mod events;
-mod player;
-pub mod score;
-pub mod star;
+mod game;
+mod main_menu;
 mod systems;
-
-use events::*;
-use systems::*;
-
-use enemy::EnemyPlugin;
-use player::PlayerPlugin;
-use score::ScorePlugin;
-use star::StarPlugin;
 
 use bevy::prelude::*;
 
+use game::GamePlugin;
+use main_menu::MainMenuPlugin;
+use systems::*;
+
 pub fn main() {
     App::new()
-        .add_plugins((
-            DefaultPlugins,
-            EnemyPlugin,
-            PlayerPlugin,
-            ScorePlugin,
-            StarPlugin,
-        ))
-        .add_event::<GameOver>()
+        .add_plugins((DefaultPlugins, MainMenuPlugin, GamePlugin))
+        .add_state::<AppState>()
         .add_systems(Startup, spawn_camera)
-        .add_systems(Update, (exit_game, handle_game_over))
+        .add_systems(Update, (exit_game, handle_game_over, transition_states))
         .run();
+}
+
+#[derive(States, Debug, Clone, Eq, PartialEq, Hash, Default)]
+pub enum AppState {
+    #[default]
+    MainMenu,
+    Game,
+    GameOver,
 }

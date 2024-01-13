@@ -5,9 +5,7 @@ use super::{ENEMY_SIZE, ENEMY_SPEED, NUMBER_OF_ENEMIES};
 use bevy::asset::AssetServer;
 use bevy::audio::AudioBundle;
 use bevy::math::{Vec2, Vec3};
-use bevy::prelude::{
-    default, Commands, Query, Res, ResMut, SpriteBundle, Time, Transform, Window, With,
-};
+use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
 use rand::random;
 
@@ -32,6 +30,12 @@ pub fn spawn_enemies(
                 direction: Vec2::new(random::<f32>(), random::<f32>()).normalize(),
             },
         ));
+    }
+}
+
+pub fn despawn_enimies(mut commands: Commands, enemy_query: Query<Entity, With<Enemy>>) {
+    for enemy_entity in enemy_query.iter() {
+        commands.entity(enemy_entity).despawn();
     }
 }
 

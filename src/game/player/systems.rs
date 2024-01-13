@@ -1,20 +1,17 @@
-use super::components::Player;
-use crate::enemy::components::Enemy;
-use crate::enemy::ENEMY_SIZE;
-use crate::events::GameOver;
-use crate::score::resources::Score;
-use crate::star::components::Star;
-use crate::star::STAR_SIZE;
-
 use bevy::asset::AssetServer;
 use bevy::audio::AudioBundle;
 use bevy::input::Input;
 use bevy::math::Vec3;
-use bevy::prelude::{
-    default, Commands, Entity, EventWriter, KeyCode, Query, Res, ResMut, SpriteBundle, Time,
-    Transform, Window, With,
-};
+use bevy::prelude::*;
 use bevy::window::PrimaryWindow;
+
+use super::components::Player;
+use crate::events::GameOver;
+use crate::game::enemy::components::Enemy;
+use crate::game::enemy::ENEMY_SIZE;
+use crate::game::score::resources::Score;
+use crate::game::star::components::Star;
+use crate::game::star::STAR_SIZE;
 
 pub const PLAYER_SIZE: f32 = 64.0; // This is the player sprite size.
 pub const PLAYER_SPEED: f32 = 500.0;
@@ -34,6 +31,12 @@ pub fn spawn_player(
         },
         Player {},
     ));
+}
+
+pub fn despawn_player(mut commands: Commands, player_query: Query<Entity, With<Player>>) {
+    if let Ok(player_entity) = player_query.get_single() {
+        commands.entity(player_entity).despawn();
+    }
 }
 
 pub fn player_movement(
