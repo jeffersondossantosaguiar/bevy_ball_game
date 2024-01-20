@@ -5,7 +5,7 @@ pub mod star;
 mod systems;
 
 use crate::events::GameOver;
-use crate::game::systems::toggle_simulation;
+use crate::game::systems::{pause_simulation, resume_simulation, toggle_simulation};
 use crate::AppState;
 use bevy::prelude::*;
 use enemy::EnemyPlugin;
@@ -20,13 +20,15 @@ impl Plugin for GamePlugin {
         app.add_state::<SimulationState>()
             .add_event::<GameOver>()
             .add_plugins((EnemyPlugin, PlayerPlugin, ScorePlugin, StarPlugin))
-            .add_systems(Update, toggle_simulation.run_if(in_state(AppState::Game)));
+            .add_systems(OnEnter(AppState::Game), pause_simulation)
+            .add_systems(Update, toggle_simulation.run_if(in_state(AppState::Game)))
+            .add_systems(OnExit(AppState::Game), resume_simulation);
     }
 }
 
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum SimulationState {
-    Running,
     #[default]
+    Running,
     Paused,
 }

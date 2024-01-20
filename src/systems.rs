@@ -17,18 +17,19 @@ pub fn spawn_camera(mut commands: Commands, window_query: Query<&Window, With<Pr
 }
 
 pub fn transition_states(
-    mut commands: Commands,
     keyboard_input: Res<Input<KeyCode>>,
     app_state: Res<State<AppState>>,
+    mut next_app_state: ResMut<NextState<AppState>>,
+    mut next_simulation_state: ResMut<NextState<SimulationState>>,
 ) {
     if (keyboard_input.just_pressed(KeyCode::G)) & (*app_state.get() != AppState::Game) {
-        commands.insert_resource(NextState(Some(AppState::Game)));
+        next_app_state.set(AppState::Game);
         println!("Entered AppState::Game");
     }
 
     if (keyboard_input.just_pressed(KeyCode::M)) & (*app_state.get() != AppState::MainMenu) {
-        commands.insert_resource(NextState(Some(AppState::MainMenu)));
-        commands.insert_resource(NextState(Some(SimulationState::Paused)));
+        next_app_state.set(AppState::MainMenu);
+        next_simulation_state.set(SimulationState::Paused);
         println!("Entered AppState::MainMenu");
     }
 }
